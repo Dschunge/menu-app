@@ -1,0 +1,463 @@
+datasource db {
+  provider     = "postgres"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearchPostgres", "relationJoins"]
+  output          = "../lib/prisma/client"
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+generator zod {
+  provider         = "npx zod-prisma-types"
+  output           = "../lib/generated" //
+  useMultipleFiles = true
+}
+
+// generator markdown {
+//   provider = "bunx prisma-markdown"
+//   output   = "./ERD.md"
+//   title    = "Shopping Mall"
+// }
+
+model Hotel {
+  id                      String       @id @default(uuid())
+  name                    String       @db.Text
+  description             String
+  description_esp         String
+  image                   String
+  country                 String
+  state                   String
+  city                    String
+  locationDescription     String
+  locationDescription_esp String
+  images                  String[]
+  videos                  String[]
+  lat                     Int
+  lng                     Int
+  phone                   String
+  phone_reservation       String?
+  phone_tollfree          String?
+  email                   String
+  website                 String       @default("")
+  facebook                String?
+  tripadvisor             String?
+  instagram               String?
+  youtube                 String?
+  whatsapp                String?
+  // rooms                   Room[]
+  // roomcategories          RoomCategory[]
+  // bookings                Booking[]
+  activities              Activity[]
+  tours                   Tour[]
+  spa                     Spa[]
+  amenities               Amenities[]
+  // areas                   Area[]
+  tvchannels              TVChannels[]
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+}
+
+enum AMENITIESTYPE {
+  HOTEL
+  ROOM
+}
+
+model Amenities {
+  id            String        @id @default(uuid())
+  name          String
+  description   String        @default("")
+  icon          String        @default("")
+  image         String        @default("")
+  amenitiestype AMENITIESTYPE
+  hotelId       String
+  Hotel         Hotel?        @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now())
+
+  @@index([hotelId])
+}
+
+model TourPriceCategory {
+  id              String   @id @default(uuid())
+  sku             Int      @unique
+  price           Int
+  description     String   @default("") @db.Text
+  description_esp String   @default("") @db.Text
+  tourId          String
+  Tour            Tour?    @relation(fields: [tourId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Tour {
+  id              String              @id @default(uuid())
+  name            String              @default("") @db.Text
+  name_esp        String              @default("") @db.Text
+  description     String              @default("") @db.Text
+  description_esp String              @default("") @db.Text
+  image           String              @default("") @db.Text
+  hotelId         String              @default("") @db.Text
+  price           Int
+  priceKids       Int                 @default(0)
+  category        String              @default("") @db.Text
+  offer           Boolean             @default(false)
+  discount        Int                 @default(0)
+  whattobring     String              @default("") @db.Text
+  included        String[]
+  pickuptime      DateTime
+  maxPeople       Int                 @default(10)
+  minPeople       Int                 @default(1)
+  minAge          Int                 @default(10)
+  bestSeller      Boolean             @default(false)
+  priceInfo       String              @default("") @db.Text
+  location        String              @default("") @db.Text
+  offered         String[]
+  pricecategory   TourPriceCategory[]
+  duration        Int                 @default(4) // Duration in hours
+  videos          String[]
+  images          String[]
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  Hotel           Hotel               @relation(fields: [hotelId], references: [id])
+}
+
+model Activity {
+  id                String           @id @default(uuid())
+  name              String           @default("") @db.Text
+  name_esp          String           @default("") @db.Text
+  description       String           @default("") @db.Text
+  description_esp   String           @default("") @db.Text
+  image             String           @default("") @db.Text
+  profileImage      String?          @default("") @db.Text
+  hotelId           String           @default("")
+  type              String           @default("") @db.Text
+  start             DateTime
+  end               DateTime
+  price             Int
+  cashOnly          Boolean          @default(false)
+  freeOfCharge      Boolean          @default(false)
+  location          String           @default("") @db.Text
+  // Recurrence fields
+  isRecurring       Boolean          @default(false)
+  recurrencePattern RECURRINGPATTERN @default(value: DAILY)
+  recurrenceDays    String[] // For weekly recurrence, which days of the week
+  recurrenceEndDate DateTime // Optional end date for recurrence
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  Hotel             Hotel?           @relation(fields: [hotelId], references: [id])
+
+  @@index([hotelId])
+}
+
+enum RECURRINGPATTERN {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+model SpaPriceCategory {
+  id              String   @id @default(uuid())
+  sku             Int
+  price           Int
+  description     String   @default("") @db.Text
+  description_esp String   @default("") @db.Text
+  duration        Int
+  spaId           String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  spa             Spa?     @relation(fields: [spaId], references: [id])
+}
+
+model Spa {
+  id              String             @id @default(uuid())
+  name            String             @default("") @db.Text
+  name_esp        String             @default("") @db.Text
+  description     String             @default("") @db.Text
+  description_esp String             @default("") @db.Text
+  hotelId         String             @default("") @db.Text
+  type            String             @default("") @db.Text
+  pricecategory   SpaPriceCategory[]
+  videos          String[]
+  images          String[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  Hotel           Hotel?             @relation(fields: [hotelId], references: [id])
+
+  @@index([hotelId])
+}
+
+enum TVCHANNELTYPE {
+  STANDARD
+  HD
+}
+
+enum TVChannelLanguages {
+  ENGLISH
+  SPANISH
+  BOTH
+}
+
+model TVChannels {
+  id              String             @id @default(uuid())
+  name            String
+  name_esp        String?
+  description     String
+  description_esp String?
+  logo            String?
+  channelNo       String
+  languages       TVChannelLanguages @default(value: ENGLISH)
+  channeltype     TVCHANNELTYPE      @default(value: STANDARD)
+  category        String             @default("")
+  hotelId         String
+  Hotel           Hotel?             @relation(fields: [hotelId], references: [id], onDelete: Cascade)
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@index([hotelId])
+}
+
+model Restaurant {
+  id                   String         @id @default(uuid())
+  name                 String         @default("")
+  description          String?        @default("")
+  descriptionshort     String?        @default("")
+  description_esp      String?        @default("")
+  descriptionshort_esp String?        @default("")
+  image                String?        @default("")
+  address              String?        @default("")
+  city                 String?        @default("")
+  state                String?        @default("")
+  zipCode              String?        @default("")
+  phone                String?        @default("")
+  email                String?        @default("")
+  website              String?        @default("")
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  categories           Category[]
+  dishes               Dish[]
+  menus                Menu[] // Added menus relation 30.04.2025
+  tables               Table[] // Added tables relation
+  reservations         Reservation[] // Added reservations relation
+  openingHours         OpeningHours[] // Added opening hours relation
+  listorder            Int            @default(1) // The order in which the restaurant appears in the list
+}
+
+// Added menus relation 30.04.2025
+model Menu {
+  id              String     @id @default(uuid())
+  position        Int        @default(1) // The order in which the menu appears
+  name            String
+  name_esp        String
+  description     String?
+  description_esp String?
+  image           String?
+  price           Float
+  restaurant      Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId    String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  dishes          Dish[]
+  //courses         Course[]
+  isActive        Boolean    @default(true)
+
+  @@unique([restaurantId, name])
+  @@index([restaurantId])
+}
+
+// model Course {
+//   id        String   @id @default(uuid())
+//   menu      Menu     @relation(fields: [menuId], references: [id])
+//   menuId    String   @unique
+//   postion   Int      @default(1) // The order in which the course appears in the menu
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+//   dishes    Dish?
+
+//   @@index([menuId])
+// }
+
+model Table {
+  id           String        @id @default(uuid())
+  number       Int
+  capacity     Int
+  location     String? // e.g., "window", "patio", "main"
+  isActive     Boolean       @default(true)
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([restaurantId, number])
+  @@index([restaurantId])
+}
+
+model Customer {
+  id           String        @id @default(uuid())
+  name         String
+  email        String
+  phone        String
+  reservations Reservation[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  @@unique([email])
+  @@index([email])
+  @@index([phone])
+}
+
+model Reservation {
+  id           String            @id @default(uuid())
+  date         DateTime
+  startTime    DateTime
+  endTime      DateTime
+  partySize    Int
+  status       ReservationStatus @default(PENDING)
+  notes        String?
+  customer     Customer          @relation(fields: [customerId], references: [id])
+  customerId   String
+  table        Table?            @relation(fields: [tableId], references: [id])
+  tableId      String?
+  restaurant   Restaurant        @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([date])
+  @@index([customerId])
+  @@index([tableId])
+  @@index([restaurantId])
+  @@index([status])
+}
+
+model Category {
+  id              String        @id @default(uuid())
+  name            String
+  name_esp        String?
+  slug            String
+  description     String?
+  description_esp String?
+  image           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  restaurant      Restaurant    @relation(fields: [restaurantId], references: [id])
+  restaurantId    String
+  dishes          Dish[]
+  subcategories   Subcategory[]
+  postition       Int           @default(1)
+
+  @@unique([restaurantId, slug])
+  @@index([slug])
+  @@index([restaurantId])
+}
+
+model Subcategory {
+  id               String           @id @default(uuid())
+  name             String
+  name_esp         String?
+  slug             String
+  description      String?
+  description_esp  String?
+  image            String?
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  category         Category         @relation(fields: [parentCategoryId], references: [id])
+  parentCategoryId String
+  dishes           Dish[]
+  subSubcategories SubSubcategory[]
+  postition        Int              @default(1)
+
+  @@unique([parentCategoryId, slug])
+  @@index([slug])
+  @@index([parentCategoryId])
+}
+
+model SubSubcategory {
+  id                  String      @id @default(uuid())
+  name                String
+  name_esp            String?
+  slug                String
+  description         String?
+  description_esp     String?
+  image               String?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  subcategory         Subcategory @relation(fields: [parentSubcategoryId], references: [id])
+  parentSubcategoryId String
+  dishes              Dish[]
+  postition           Int         @default(1)
+
+  @@unique([parentSubcategoryId, slug])
+  @@index([slug])
+  @@index([parentSubcategoryId])
+}
+
+model Dish {
+  id                   String          @id @default(uuid())
+  sku                  Int             @unique
+  name                 String
+  name_esp             String
+  description          String
+  description_esp      String
+  price                Float
+  unit                 String?
+  image                String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+  restaurant           Restaurant      @relation(fields: [restaurantId], references: [id])
+  restaurantId         String
+  category             Category        @relation(fields: [categoryId], references: [id])
+  categoryId           String
+  subcategory          Subcategory?    @relation(fields: [subcategoryId], references: [id])
+  subcategoryId        String?
+  subSubcategory       SubSubcategory? @relation(fields: [subSubcategoryId], references: [id])
+  subSubcategoryId     String?
+  availableAtDayOfWeek Int             @default(0)
+  dietaryInfo          String[]        @default([])
+  allergens            String[]        @default([])
+  ingredients          String[]        @default([])
+  prepTime             Int?
+  isPopular            Boolean         @default(false)
+  isNew                Boolean         @default(false)
+  // course               Course?         @relation(fields: [courseId], references: [id])
+  // courseId             String?         @unique
+  menu                 Menu?           @relation(fields: [menuId], references: [id]) // Added menu relation 30.04.2025
+  menuId               String?
+  course_number        Int             @default(1)
+
+  //@@index([courseId])
+  //@@index([menuId])
+  @@index([categoryId])
+  @@index([subcategoryId])
+  @@index([subSubcategoryId])
+  @@index([isPopular])
+  @@index([isNew])
+  @@index([sku])
+  @@index([restaurantId])
+}
+
+model OpeningHours {
+  id           String     @id @default(uuid())
+  dayOfWeek    Int // 0 = Sunday, 1 = Monday, etc.
+  openTime     String // Format: "HH:MM"
+  closeTime    String // Format: "HH:MM"
+  isClosed     Boolean    @default(false)
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String
+
+  @@unique([restaurantId, dayOfWeek])
+  @@index([restaurantId])
+  @@index([dayOfWeek])
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}

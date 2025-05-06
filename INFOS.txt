@@ -1,0 +1,11 @@
+# Build the image
+docker build -t menu-app .
+
+# Run the container
+docker run -p 3000:3000 menu-app
+
+docker compose up --force-recreate --build -d
+
+maciej.ns.cloudflare.com
+
+summer.ns.cloudflare.com

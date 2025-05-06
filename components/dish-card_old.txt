@@ -1,0 +1,93 @@
+import Image from "next/image";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
+
+interface DishCardProps {
+  dish: any;
+}
+
+export default function DishCard({ dish }: DishCardProps) {
+  const getImageId = (imageUrl: string) => {
+    const convertString = "c_thumb,w_200";
+    const parts = imageUrl.split("/");
+
+    // Find the index of the version string (starts with 'v' and followed by digits)
+    const versionIndex = parts.findIndex(
+      (part) => part.startsWith("v") && !isNaN(Number(part.slice(1)))
+    );
+
+    if (versionIndex !== -1) {
+      // Replace the version string with the desired transformation
+      parts[versionIndex] = convertString;
+    }
+
+    const updatedUrl = parts.join("/");
+    console.log(updatedUrl);
+    return updatedUrl;
+  };
+
+  return (
+    <Link href={`/restaurants/${dish.restaurantId}/dish/${dish.id}`}>
+      <Card className="overflow-hidden hover:shadow-md transition-all border-gray-200">
+        <div className="flex">
+          <div className="relative h-24 w-24 flex-shrink-0">
+            <Image
+              // src={
+              //   dish.image || "/placeholder.svg?height=96&width=96&query=food"
+              // }
+              src={
+                dish.image
+                  ? getImageId(dish.image || "")
+                  : "/placeholder.svg?height=40&width=40"
+              }
+              alt={dish.name}
+              fill
+              className="object-contain"
+            />
+            {dish.isPopular && (
+              <div className="absolute top-1 left-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-medium">
+                Popular
+              </div>
+            )}
+            {dish.isNew && (
+              <div className="absolute top-1 right-1 bg-green-500 text-white text-[10px] px-1.5 py-0.5 rounded-sm font-medium">
+                New
+              </div>
+            )}
+          </div>
+
+          <CardContent className="p-3 flex-1">
+            <div className="flex justify-between items-start">
+              <div>
+                <h3 className="font-medium text-gray-900">{dish.name}</h3>
+                <p className="text-sm text-gray-600 mt-0.5 line-clamp-2">
+                  {dish.description}
+                </p>
+
+                {/* Dietary info badges */}
+                {dish.dietaryInfo && dish.dietaryInfo.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {dish.dietaryInfo.map((info: string) => (
+                      <Badge
+                        key={info}
+                        variant="outline"
+                        className="text-[10px] py-0 px-1.5 bg-gray-50 text-gray-600 font-normal"
+                      >
+                        {info}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="font-semibold ml-2 text-gray-900">
+                ${dish.price.toFixed(2)}
+              </div>
+            </div>
+          </CardContent>
+        </div>
+      </Card>
+    </Link>
+  );
+}

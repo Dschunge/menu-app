@@ -1,0 +1,112 @@
+import Image from "next/image";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { MapPin, Clock, Phone, Globe } from "lucide-react";
+import type { Restaurant, OpeningHours } from "@/lib/generated/prisma/client";
+
+export type RestaurantWithOpeningHours = Restaurant & {
+  openinghours: OpeningHours[];
+};
+
+interface RestaurantCardProps {
+  restaurant: Restaurant;
+}
+
+export function RestaurantCard({ restaurant }: RestaurantCardProps) {
+  // Get today's opening hours
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
+  //const todayHours = restaurant..filter((h) => h.day === today);
+
+  // Format opening hours for display
+  // const formatOpeningHours = () => {
+  //   if (todayHours.length === 0) return "Closed today";
+  //   if (todayHours[0].isClosed) return "Closed today";
+
+  //   if (todayHours.length === 1) {
+  //     return `${formatTime(todayHours[0].open)} - ${formatTime(
+  //       todayHours[0].close
+  //     )}`;
+  //   } else {
+  //     // For split hours (like lunch and dinner service)
+  //     return todayHours
+  //       .map((h) => `${formatTime(h.open)} - ${formatTime(h.close)}`)
+  //       .join(", ");
+  //   }
+  // };
+
+  // Convert 24h time to 12h format
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const hour12 = hours % 12 || 12;
+    return `${hour12}:${minutes.toString().padStart(2, "0")} ${period}`;
+  };
+
+  return (
+    <Link href={`/restaurants/${restaurant.id}`}>
+      <Card className="overflow-hidden hover:shadow-md transition-shadow h-full">
+        <div className="relative h-24 sm:h-32 md:h-40 w-full">
+          <Image
+            src={restaurant.image || "/placeholder.svg"}
+            alt={restaurant.name}
+            fill
+            className="object-contain"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          />
+        </div>
+        <CardContent className="p-4 sm:p-6">
+          <div className="flex justify-between items-start mb-2">
+            <h2 className="font-semibold text-xl sm:text-2xl line-clamp-1">
+              {restaurant.name}
+            </h2>
+          </div>
+
+          {/* <div className="flex flex-wrap gap-2 mb-3">
+            {restaurant.categories.map((category) => (
+              <Badge key={category.id} variant="outline" className="text-base">
+                {category.name}
+              </Badge>
+            ))}
+          </div> */}
+
+          <div className="flex flex-wrap gap-2 mb-3">
+            <Badge variant="outline" className="text-base">
+              Fine Dining
+            </Badge>
+          </div>
+
+          <p className="text-lg text-muted-foreground line-clamp-2 mb-4">
+            {restaurant.descriptionshort}
+          </p>
+
+          <div className="space-y-2 text-lg">
+            <div className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-muted-foreground shrink-0" />
+              <span className="line-clamp-1">
+                {restaurant.address}, {restaurant.city}, {restaurant.state}
+              </span>
+            </div>
+
+            {/* <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-muted-foreground shrink-0" />
+              <span>{formatOpeningHours()}</span>
+            </div> */}
+
+            <div className="flex items-center gap-2">
+              <Phone className="h-5 w-5 text-muted-foreground shrink-0" />
+              <span>{restaurant.phone}</span>
+            </div>
+
+            {restaurant.website && (
+              <div className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-muted-foreground shrink-0" />
+                <span className="line-clamp-1">{restaurant.website}</span>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}

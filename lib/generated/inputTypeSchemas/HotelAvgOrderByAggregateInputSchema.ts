@@ -1,0 +1,11 @@
+import type { Prisma } from '../../prisma/client';
+
+import { z } from 'zod';
+import { SortOrderSchema } from './SortOrderSchema';
+
+export const HotelAvgOrderByAggregateInputSchema: z.ZodType<Prisma.HotelAvgOrderByAggregateInput> = z.object({
+  lat: z.lazy(() => SortOrderSchema).optional(),
+  lng: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export default HotelAvgOrderByAggregateInputSchema;

@@ -1,0 +1,45 @@
+"use client"
+
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { ChevronDown, ChevronUp } from "lucide-react"
+
+interface RestaurantDescriptionProps {
+  description: string
+}
+
+export default function RestaurantDescription({ description }: RestaurantDescriptionProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  // Get a preview of the description (first 100 characters)
+  const previewText = description.length > 100 ? `${description.substring(0, 100)}...` : description
+
+  return (
+    <div className="border rounded-lg p-3 bg-gray-50">
+      <div className={`text-gray-700 text-sm ${isExpanded ? "" : "line-clamp-2"}`}>
+        {isExpanded ? description : previewText}
+      </div>
+
+      {description.length > 100 && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full mt-1 text-xs flex items-center justify-center h-6 hover:bg-gray-100"
+        >
+          {isExpanded ? (
+            <>
+              <span>Show less</span>
+              <ChevronUp className="ml-1 h-3 w-3" />
+            </>
+          ) : (
+            <>
+              <span>Read more</span>
+              <ChevronDown className="ml-1 h-3 w-3" />
+            </>
+          )}
+        </Button>
+      )}
+    </div>
+  )
+}
