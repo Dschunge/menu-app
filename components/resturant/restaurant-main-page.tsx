@@ -33,7 +33,7 @@ export default function ResaturanMainPage({
       </div>
 
       {/* Language Toggle */}
-      <div className="absolute flex items-center top-4 right-4 z-20">
+      <div className="absolute flex items-center top-4 right-4 z-20 gap-2">
         <LanguageToggle />
         <ThemeToggle />
       </div>
@@ -44,11 +44,14 @@ export default function ResaturanMainPage({
         <div className="mb-4 flex items-center justify-center">
           <div className="bg-white/10 backdrop-blur-md p-1 rounded-full border border-white/20">
             <Image
-              src="https://res.cloudinary.com/dgfgt8hwr/image/upload/v1717262421/diriahms/eyxtuhxiulrhrowp8jmq.png"
-              alt="Culinary Ventures Logo"
+              src="https://res.cloudinary.com/dzywjg4tp/image/upload/v1746644294/zae9ibmrva4u1r993cti.png"
+              //src="https://res.cloudinary.com/dzywjg4tp/image/upload/v1745444210/glkansdey63fqamz5yu4.png"
+              alt="Logo"
               width={40}
               height={40}
-              className="h-72 w-auto"
+              className="object-contain h-72 w-auto"
+              //fill
+              //className="object-contain"
             />
           </div>
           {/* <h2 className="ml-2 text-sm text-white/80 font-light">

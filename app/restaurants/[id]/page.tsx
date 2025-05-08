@@ -10,6 +10,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { Suspense } from "react";
 import LanguageToggle from "@/components/language-toggle";
 import { RestaurantMenus } from "@/components/resturant/restaurant-menus";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "framer-motion";
 
 interface RestaurantPageProps {
   params: Promise<{
@@ -43,7 +45,7 @@ export default async function RestaurantPage({ params }: RestaurantPageProps) {
   }
 
   return (
-    <main className="mt-8">
+    <main className="mt-0">
       <div className="container mx-auto px-4 max-w-screen">
         <div className="flex items-center justify-between py-3 w-full">
           <div className="relative flex justify-end items-center">

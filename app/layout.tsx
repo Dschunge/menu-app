@@ -41,7 +41,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className="overflow-x-hidden">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className="overflow-x-hidden"
+      data-theme="dark"
+    >
       <head>
         <meta
           name="viewport"
@@ -69,6 +74,7 @@ export default function RootLayout({
         {/* <link rel="manifest" href="/site.webmanifest"></link> */}
       </head>
       <body className={`${inter.className}`} suppressHydrationWarning>
+        {/* <div className="bg-white dark:bg-amber-600"> */}
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -78,6 +84,7 @@ export default function RootLayout({
         >
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>
+        {/* </div> */}
       </body>
     </html>
   );

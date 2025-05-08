@@ -39,131 +39,119 @@ export function RestaurantMenus({ menus, restaurantId }: RestaurantMenusProps) {
 
   return (
     <div className="w-full">
-      <AuroraBackground>
-        <motion.div
-          initial={{ opacity: 0.0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 0.3,
-            duration: 0.8,
-            ease: "easeInOut",
-          }}
-          // className="relative flex flex-col gap-4 items-center justify-center px-4"
-        ></motion.div>
+      <Tabs
+        defaultValue={menus[0]?.id}
+        className="w-full"
+        onValueChange={setActiveMenu}
+      >
+        <div className="mb-8">
+          <TabsList className="w-full h-auto flex flex-wrap gap-2">
+            {menus.map((menu) => (
+              <TabsTrigger
+                key={menu.id}
+                value={menu.id}
+                className="px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
+              >
+                {t(menu.name, menu.name_esp)}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-        <Tabs
-          defaultValue={menus[0]?.id}
-          className="w-full"
-          onValueChange={setActiveMenu}
-        >
-          <div className="mb-8">
-            <TabsList className="w-full h-auto flex flex-wrap gap-2">
-              {menus.map((menu) => (
-                <TabsTrigger
-                  key={menu.id}
-                  value={menu.id}
-                  className="px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
-                >
-                  {t(menu.name, menu.name_esp)}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          {menus.map((menu) => (
-            <TabsContent key={menu.id} value={menu.id} className="w-full">
-              <Card className="mb-8">
-                <CardHeader>
-                  <div className="flex flex-wrap justify-between items-start gap-4">
-                    <div>
-                      <CardTitle className="text-2xl">
-                        {t(menu.name, menu.name_esp)}
-                      </CardTitle>
-                      {/* <CardDescription className="mt-2">
+        {menus.map((menu) => (
+          <TabsContent key={menu.id} value={menu.id} className="w-full">
+            <Card className="mb-8">
+              <CardHeader>
+                <div className="flex flex-wrap justify-between items-start gap-4">
+                  <div>
+                    <CardTitle className="text-2xl">
+                      {t(menu.name, menu.name_esp)}
+                    </CardTitle>
+                    {/* <CardDescription className="mt-2">
                       {menu.description}
                     </CardDescription> */}
-                    </div>
-                    <div className="text-2xl font-bold">
-                      ${menu.price.toFixed(2)} {t("per person", "por persona")}
-                    </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      {t(menu.description, menu.description_esp)}
-                    </div>
                   </div>
-                </CardHeader>
-              </Card>
+                  <div className="text-2xl font-bold">
+                    ${menu.price.toFixed(2)} {t("per person", "por persona")}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1">
+                    {t(menu.description, menu.description_esp)}
+                  </div>
+                </div>
+              </CardHeader>
+            </Card>
 
-              <div className="space-y-6">
-                {menu.dishes
-                  //.slice()
-                  .sort((a: Dish, b: Dish) => a.course_number - b.course_number)
-                  .map((dish: Dish) => {
-                    return (
-                      <Card key={dish.id} className="overflow-hidden">
-                        <div className="flex flex-col sm:flex-row">
-                          <div className="relative w-full sm:w-48 h-48">
-                            <Image
-                              src={dish.image || "/placeholder.svg"}
-                              alt={dish.name}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 640px) 100vw, 192px"
-                              priority
-                            />
-                          </div>
-                          <CardContent className="flex-1 p-4 sm:p-6">
-                            <div className="flex justify-between items-start">
-                              <div>
-                                <div className="text-lg text-muted-foreground mb-1">
-                                  {t("COURSE", "CURSO")} {dish.course_number}
-                                </div>
-                                <h4 className="text-lg font-bold">
-                                  {t(dish.name, dish.name_esp)}
-                                </h4>
-                                <div className="flex items-center gap-2 mt-1">
-                                  {dish.isNew && (
-                                    <Badge
-                                      variant="secondary"
-                                      className="flex items-center gap-1"
-                                    >
-                                      <Sparkles className="h-3 w-3" />
-                                      {t("NEW", "NUEVO")}
-                                    </Badge>
-                                  )}
-                                  {dish.isPopular && (
-                                    <Badge
-                                      variant="outline"
-                                      className="flex items-center gap-1"
-                                    >
-                                      <Flame className="h-3 w-3 text-orange-500" />
-                                      {t("POPULAR", "POPULAR")}
-                                    </Badge>
-                                  )}
-                                </div>
+            <div className="space-y-6">
+              {menu.dishes
+                //.slice()
+                .sort((a: Dish, b: Dish) => a.course_number - b.course_number)
+                .map((dish: Dish) => {
+                  return (
+                    <Card key={dish.id} className="overflow-hidden">
+                      <div className="flex flex-col sm:flex-row">
+                        <div className="relative w-full sm:w-48 h-48">
+                          <Image
+                            src={dish.image || "/placeholder.svg"}
+                            alt={dish.name}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, 192px"
+                            priority
+                          />
+                        </div>
+                        <CardContent className="flex-1 p-4 sm:p-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <div className="text-lg text-muted-foreground mb-1">
+                                {t("COURSE", "CURSO")} {dish.course_number}
+                              </div>
+                              <h4 className="text-lg font-bold">
+                                {t(dish.name, dish.name_esp)}
+                              </h4>
+                              <div className="flex items-center gap-2 mt-1">
+                                {dish.isNew && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="flex items-center gap-1"
+                                  >
+                                    <Sparkles className="h-3 w-3" />
+                                    {t("NEW", "NUEVO")}
+                                  </Badge>
+                                )}
+                                {dish.isPopular && (
+                                  <Badge
+                                    variant="outline"
+                                    className="flex items-center gap-1"
+                                  >
+                                    <Flame className="h-3 w-3 text-orange-500" />
+                                    {t("POPULAR", "POPULAR")}
+                                  </Badge>
+                                )}
                               </div>
                             </div>
-                            <p className="text-muted-foreground mt-3">
-                              {t(dish.description, dish.description_esp)}
-                            </p>
-                            <div className="mt-4 flex justify-end">
-                              <Link
-                                href={`/restaurants/${restaurantId}/dish/${dish.id}`}
-                                className="inline-flex items-center text-sm font-medium text-primary hover:underline"
-                              >
-                                {t("View details", "Ver detalles")}
-                                <ArrowRight className="ml-1 h-4 w-4" />
-                              </Link>
-                            </div>
-                          </CardContent>
-                        </div>
-                      </Card>
-                    );
-                  })}
-              </div>
-            </TabsContent>
-          ))}
-        </Tabs>
-      </AuroraBackground>
+                          </div>
+                          <p className="text-muted-foreground mt-3">
+                            {t(dish.description, dish.description_esp)}
+                          </p>
+                          <div className="mt-4 flex justify-end">
+                            <Link
+                              href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+                              className="inline-flex items-center text-sm font-medium text-primary hover:underline"
+                            >
+                              {t("View details", "Ver detalles")}
+                              <ArrowRight className="ml-1 h-4 w-4" />
+                            </Link>
+                          </div>
+                        </CardContent>
+                      </div>
+                    </Card>
+                  );
+                })}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+      {/* </AuroraBackground> */}
     </div>
   );
 }
