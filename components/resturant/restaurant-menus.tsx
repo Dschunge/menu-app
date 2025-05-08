@@ -74,7 +74,7 @@ export function RestaurantMenus({ menus, restaurantId }: RestaurantMenusProps) {
                   <div className="text-2xl font-bold">
                     ${menu.price.toFixed(2)} {t("per person", "por persona")}
                   </div>
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="text-xl flex items-center gap-2 mt-1">
                     {t(menu.description, menu.description_esp)}
                   </div>
                 </div>
@@ -88,62 +88,67 @@ export function RestaurantMenus({ menus, restaurantId }: RestaurantMenusProps) {
                 .map((dish: Dish) => {
                   return (
                     <Card key={dish.id} className="overflow-hidden">
-                      <div className="flex flex-col sm:flex-row">
-                        <div className="relative w-full sm:w-48 h-48">
-                          <Image
-                            src={dish.image || "/placeholder.svg"}
-                            alt={dish.name}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 100vw, 192px"
-                            priority
-                          />
-                        </div>
-                        <CardContent className="flex-1 p-4 sm:p-6">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <div className="text-lg text-muted-foreground mb-1">
-                                {t("COURSE", "CURSO")} {dish.course_number}
-                              </div>
-                              <h4 className="text-lg font-bold">
-                                {t(dish.name, dish.name_esp)}
-                              </h4>
-                              <div className="flex items-center gap-2 mt-1">
-                                {dish.isNew && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="flex items-center gap-1"
-                                  >
-                                    <Sparkles className="h-3 w-3" />
-                                    {t("NEW", "NUEVO")}
-                                  </Badge>
-                                )}
-                                {dish.isPopular && (
-                                  <Badge
-                                    variant="outline"
-                                    className="flex items-center gap-1"
-                                  >
-                                    <Flame className="h-3 w-3 text-orange-500" />
-                                    {t("POPULAR", "POPULAR")}
-                                  </Badge>
-                                )}
+                      <Link
+                        href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+                        className="text-lg inline-flex items-center font-medium text-primary hover:underline"
+                      >
+                        <div className="flex flex-col sm:flex-row">
+                          <div className="relative w-full sm:w-48 h-48">
+                            <Image
+                              src={dish.image || "/placeholder.svg"}
+                              alt={dish.name}
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 640px) 100vw, 192px"
+                              priority
+                            />
+                          </div>
+                          <CardContent className="flex-1 p-4 sm:p-6">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="text-lg text-muted-foreground mb-1">
+                                  {t("COURSE", "CURSO")} {dish.course_number}
+                                </div>
+                                <h4 className="text-2xl font-bold">
+                                  {t(dish.name, dish.name_esp)}
+                                </h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                  {dish.isNew && (
+                                    <Badge
+                                      variant="secondary"
+                                      className="flex items-center gap-1"
+                                    >
+                                      <Sparkles className="h-3 w-3" />
+                                      {t("NEW", "NUEVO")}
+                                    </Badge>
+                                  )}
+                                  {dish.isPopular && (
+                                    <Badge
+                                      variant="outline"
+                                      className="flex items-center gap-1"
+                                    >
+                                      <Flame className="h-3 w-3 text-orange-500" />
+                                      {t("POPULAR", "POPULAR")}
+                                    </Badge>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <p className="text-muted-foreground mt-3">
-                            {t(dish.description, dish.description_esp)}
-                          </p>
-                          <div className="mt-4 flex justify-end">
-                            <Link
-                              href={`/restaurants/${restaurantId}/dish/${dish.id}`}
-                              className="inline-flex items-center text-sm font-medium text-primary hover:underline"
-                            >
-                              {t("View details", "Ver detalles")}
-                              <ArrowRight className="ml-1 h-4 w-4" />
-                            </Link>
-                          </div>
-                        </CardContent>
-                      </div>
+                            <p className="text-lg text-muted-foreground mt-3">
+                              {t(dish.description, dish.description_esp)}
+                            </p>
+                            <div className="mt-4 flex justify-end">
+                              <div
+                                //href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+                                className="text-lg inline-flex items-center font-medium text-primary hover:underline"
+                              >
+                                {t("View details", "Ver detalles")}
+                                <ArrowRight className="ml-1 h-4 w-4" />
+                              </div>
+                            </div>
+                          </CardContent>
+                        </div>
+                      </Link>
                     </Card>
                   );
                 })}

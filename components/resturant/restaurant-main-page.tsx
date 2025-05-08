@@ -50,6 +50,7 @@ export default function ResaturanMainPage({
               width={40}
               height={40}
               className="object-contain h-72 w-auto"
+              priority
               //fill
               //className="object-contain"
             />
@@ -101,9 +102,10 @@ export default function ResaturanMainPage({
                 </p>
 
                 <Button
-                  className="w-full text-2xl"
+                  className="w-full text-xl"
                   variant={"destructive"}
                   asChild
+                  size={"lg"}
                 >
                   <Link
                     href={`/restaurants/${restaurant.id}`}
