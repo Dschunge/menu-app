@@ -16,5 +16,7 @@ services:
     #   - stack.env
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      - PORT=${PORT}
     # env_file:
-    #       - .env
+    #   - .env
+    
