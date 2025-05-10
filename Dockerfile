@@ -13,7 +13,7 @@ WORKDIR /app
 # ENV NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
 
 # Copy package files and install dependencies
-COPY package.json yarn.lock* ./
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
 RUN \
   if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \
@@ -25,8 +25,8 @@ RUN \
 COPY . .
 
 # Set environment variables
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 
 # Build the application
 RUN npm run build
@@ -38,13 +38,10 @@ WORKDIR /app
 # Install production dependencies only
 RUN apk add --no-cache dumb-init
 
-ARG DATABASE_URL
-ENV DATABASE_URL=${DATABASE_URL}
-
-ENV PORT=3002
-
-# Expose the port the app will run on
-EXPOSE 3002  
+# Set environment variables
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV PORT 3000
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -61,8 +58,11 @@ RUN chown -R nextjs:nodejs /app
 # Switch to non-root user
 USER nextjs
 
+# Expose the port the app will run on
+EXPOSE 3000
+
 # Set host to listen on all network interfaces
-ENV HOST=0.0.0.0
+ENV HOST 0.0.0.0
 
 # Start the application
 CMD ["dumb-init", "node", "server.js"]

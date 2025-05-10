@@ -3,20 +3,17 @@ services:
     container_name: menu-app
     restart: always
     ports:
-      - "3002:3002"  # Map host port 3002 to container port 3002
+      - "3002:3000"
     build:
       context: ./
       dockerfile: ./Dockerfile
       # args:
       #   - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY}
       #   - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
-    image: menu-app:latest  # Ensure this matches your intended image name
+    image: menu-app:0.1
     pull_policy: always
-    # env_file:
-    #   - stack.env
+    env_file:
+      - stack.env
     environment:
       - DATABASE_URL=${DATABASE_URL}
-      - PORT=${PORT}
-    # env_file:
-    #   - .env
-    
+      
