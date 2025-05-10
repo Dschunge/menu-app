@@ -16,5 +16,5 @@ services:
     #   - stack.env
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    env_file:
-          - .env
+    # env_file:
+    #       - .env
