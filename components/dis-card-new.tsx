@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Flame, Sparkles, ArrowRight } from "lucide-react";
 import { useLanguage } from "./providers/language-provider";
+import { DishDetailsDialog } from "./resturant/dish-details-dialog";
+import { useState } from "react";
 //import type { Dish } from "@/types/dish"
 
 interface DishCardProps {
@@ -14,6 +16,7 @@ interface DishCardProps {
 
 export function DishCardNew({ restaurantId, dish, viewMode }: DishCardProps) {
   const { t } = useLanguage();
+  const [openDialog, setOpenDialog] = useState(false);
   const {
     name,
     name_esp,
@@ -86,11 +89,26 @@ export function DishCardNew({ restaurantId, dish, viewMode }: DishCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden h-full flex flex-col">
-      <Link
-        href={`/restaurants/${restaurantId}/dish/${dish.id}`}
-        //className="inline-flex items-center text-lg font-medium text-primary hover:underline"
+    <>
+      <DishDetailsDialog
+        dish={dish}
+        open={openDialog}
+        onOpenChange={() => {
+          console.log("onOpenChange");
+          setOpenDialog(false);
+        }}
+      />
+
+      <Card
+        className="overflow-hidden h-full flex flex-col"
+        onClick={() => {
+          setOpenDialog(true);
+        }}
       >
+        {/* <Link
+          href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+          className="inline-flex items-center text-lg font-medium text-primary hover:underline"
+        > */}
         <div className="relative w-full h-48 mt-4">
           <Image
             src={image || "/placeholder.svg"}
@@ -126,16 +144,17 @@ export function DishCardNew({ restaurantId, dish, viewMode }: DishCardProps) {
             {t(description, description_esp)}
           </p>
         </CardContent>
-      </Link>
-      <CardFooter className="mt-auto pt-4 flex justify-end">
-        <Link
-          href={`/restaurants/${restaurantId}/dish/${dish.id}`}
-          className="inline-flex items-center text-lg font-medium text-primary hover:underline"
-        >
-          {t("View details", "Ver detalles")}
-          <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
-      </CardFooter>
-    </Card>
+        {/* </Link> */}
+        <CardFooter className="mt-auto pt-4 flex justify-end">
+          <div
+            //href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+            className="inline-flex items-center text-lg font-medium text-primary hover:underline"
+          >
+            {t("View details", "Ver detalles")}
+            <ArrowRight className="ml-1 h-4 w-4" />
+          </div>
+        </CardFooter>
+      </Card>
+    </>
   );
 }

@@ -91,7 +91,7 @@ export default function ResaturanMainPage({
                 )}
               </div>
               <div className="p-4 flex flex-col flex-grow">
-                <h2 className="text-2xl font-bold text-white">
+                {/* <h2 className="text-2xl font-bold text-white">
                   {t(restaurant.name, restaurant.name || "")}
                 </h2>
                 <p className="text-white/80 mb-4 flex-grow">
@@ -99,11 +99,11 @@ export default function ResaturanMainPage({
                     restaurant.descriptionshort || "",
                     restaurant.descriptionshort_esp || ""
                   )}
-                </p>
+                </p> */}
 
                 <Button
                   className="w-full text-xl"
-                  variant={"destructive"}
+                  //variant={"destructive"}
                   asChild
                   size={"lg"}
                 >
@@ -119,9 +119,6 @@ export default function ResaturanMainPage({
           ))}
         </div>
       </div>
-      {/* <InfiniteSlider>
-        <div className="text-white text-xl">Your sliding content here</div>
-      </InfiniteSlider> */}
       <InfiniteSlider gap={24} reverse speed={50}>
         <img
           src="https://res.cloudinary.com/dzywjg4tp/image/upload/v1745853525/fkh03ezsfwlqrwg7wwff.png"

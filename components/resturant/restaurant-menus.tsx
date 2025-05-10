@@ -17,6 +17,9 @@ import type { Dish, Menu } from "@/lib/generated/modelSchema";
 import { useLanguage } from "../providers/language-provider";
 import { AuroraBackground } from "../ui/aurora-background";
 import { motion } from "motion/react";
+import { DishDetailsDialog } from "./dish-details-dialog";
+import { set } from "date-fns";
+import { InactivityRedirect } from "../inactivity-redirect";
 
 // type MenuWithDishes = Menu & {
 //   restaurantId: string;
@@ -36,62 +39,81 @@ interface RestaurantMenusProps {
 export function RestaurantMenus({ menus, restaurantId }: RestaurantMenusProps) {
   const { t } = useLanguage();
   const [activeMenu, setActiveMenu] = useState(menus[0]?.id || "");
+  const [openDialog, setOpenDialog] = useState(false);
+  const [dish, setDish] = useState<Dish | null>(null);
 
   return (
-    <div className="w-full">
-      <Tabs
-        defaultValue={menus[0]?.id}
-        className="w-full"
-        onValueChange={setActiveMenu}
-      >
-        <div className="mb-8">
-          <TabsList className="w-full h-auto flex flex-wrap gap-2">
-            {menus.map((menu) => (
-              <TabsTrigger
-                key={menu.id}
-                value={menu.id}
-                className="px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
-              >
-                {t(menu.name, menu.name_esp)}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </div>
+    <>
+      <DishDetailsDialog
+        dish={dish}
+        open={openDialog}
+        onOpenChange={() => {
+          console.log("onOpenChange");
+          setOpenDialog(false);
+        }}
+      />
 
-        {menus.map((menu) => (
-          <TabsContent key={menu.id} value={menu.id} className="w-full">
-            <Card className="mb-8">
-              <CardHeader>
-                <div className="flex flex-wrap justify-between items-start gap-4">
-                  <div>
-                    <CardTitle className="text-2xl">
-                      {t(menu.name, menu.name_esp)}
-                    </CardTitle>
-                    {/* <CardDescription className="mt-2">
+      <div className="w-full">
+        <Tabs
+          defaultValue={menus[0]?.id}
+          className="w-full"
+          onValueChange={setActiveMenu}
+        >
+          <div className="mb-8">
+            <TabsList className="w-full h-auto flex flex-wrap gap-2">
+              {menus.map((menu) => (
+                <TabsTrigger
+                  key={menu.id}
+                  value={menu.id}
+                  className="px-6 py-3 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-lg"
+                >
+                  {t(menu.name, menu.name_esp)}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+
+          {menus.map((menu) => (
+            <TabsContent key={menu.id} value={menu.id} className="w-full">
+              <Card className="mb-8">
+                <CardHeader>
+                  <div className="flex flex-wrap justify-between items-start gap-4">
+                    <div>
+                      <CardTitle className="text-2xl">
+                        {t(menu.name, menu.name_esp)}
+                      </CardTitle>
+                      {/* <CardDescription className="mt-2">
                       {menu.description}
                     </CardDescription> */}
+                    </div>
+                    <div className="text-2xl font-bold">
+                      ${menu.price.toFixed(2)} {t("per person", "por persona")}
+                    </div>
+                    <div className="text-xl flex items-center gap-2 mt-1">
+                      {t(menu.description, menu.description_esp)}
+                    </div>
                   </div>
-                  <div className="text-2xl font-bold">
-                    ${menu.price.toFixed(2)} {t("per person", "por persona")}
-                  </div>
-                  <div className="text-xl flex items-center gap-2 mt-1">
-                    {t(menu.description, menu.description_esp)}
-                  </div>
-                </div>
-              </CardHeader>
-            </Card>
+                </CardHeader>
+              </Card>
 
-            <div className="space-y-6">
-              {menu.dishes
-                //.slice()
-                .sort((a: Dish, b: Dish) => a.course_number - b.course_number)
-                .map((dish: Dish) => {
-                  return (
-                    <Card key={dish.id} className="overflow-hidden">
-                      <Link
-                        href={`/restaurants/${restaurantId}/dish/${dish.id}`}
-                        className="text-lg inline-flex items-center font-medium text-primary hover:underline"
+              <div className="space-y-6">
+                {menu.dishes
+                  //.slice()
+                  .sort((a: Dish, b: Dish) => a.course_number - b.course_number)
+                  .map((dish: Dish) => {
+                    return (
+                      <Card
+                        key={dish.id}
+                        className="overflow-hidden"
+                        onClick={() => {
+                          setDish(dish);
+                          setOpenDialog(true);
+                        }}
                       >
+                        {/* <Link
+                          href={`/restaurants/${restaurantId}/dish/${dish.id}`}
+                          className="text-lg inline-flex items-center font-medium text-primary hover:underline"
+                        > */}
                         <div className="flex flex-col sm:flex-row">
                           <div className="relative w-full sm:w-48 h-48">
                             <Image
@@ -148,15 +170,17 @@ export function RestaurantMenus({ menus, restaurantId }: RestaurantMenusProps) {
                             </div>
                           </CardContent>
                         </div>
-                      </Link>
-                    </Card>
-                  );
-                })}
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-      {/* </AuroraBackground> */}
-    </div>
+                        {/* </Link> */}
+                      </Card>
+                    );
+                  })}
+              </div>
+            </TabsContent>
+          ))}
+        </Tabs>
+      </div>
+      {/* Inactivity redirect component - 60 second timeout */}
+      <InactivityRedirect timeoutInSeconds={30} redirectPath="/" />
+    </>
   );
 }

@@ -12,6 +12,7 @@ import {
   Dish,
 } from "@/lib/generated/modelSchema";
 import { InactivityRedirect } from "./inactivity-redirect";
+import { Card, CardContent } from "./ui/card";
 
 // Define types for our hierarchical structure
 // type SubSubCategory = {
@@ -127,7 +128,7 @@ export function RestaurantMenu({
     } else if (navigationLevel === "subcategory" && activeSubcategory) {
       return activeSubcategory.dishes;
     } else if (navigationLevel === "category" && activeCategory) {
-      return activeCategory.dishes;
+      return []; // activeCategory.dishes;
     }
     return [];
   };
@@ -150,6 +151,27 @@ export function RestaurantMenu({
       return t(activeSubcategory.name, activeSubcategory?.name_esp || "");
     } else if (navigationLevel === "category" && activeCategory) {
       return t(activeCategory.name, activeCategory?.name_esp || "");
+    }
+    return "Menu";
+  };
+
+  // Get current title based on navigation level
+  const getCurrentDescription = () => {
+    if (navigationLevel === "subsubcategory" && activeSubSubcategory) {
+      return t(
+        activeSubSubcategory?.description || "",
+        activeSubcategory?.description_esp || ""
+      );
+    } else if (navigationLevel === "subcategory" && activeSubcategory) {
+      return t(
+        activeSubcategory?.description || "",
+        activeSubcategory?.description_esp || ""
+      );
+    } else if (navigationLevel === "category" && activeCategory) {
+      return t(
+        activeCategory?.description || "",
+        activeCategory?.description_esp || ""
+      );
     }
     return "Menu";
   };
@@ -348,6 +370,19 @@ export function RestaurantMenu({
         ) : (
           <div>
             {/* <h3 className="font-medium text-lg mb-3">{getCurrentTitle()}</h3> */}
+            <Card
+              className={getCurrentDescription().length > 0 ? "mb-4" : "hidden"}
+            >
+              {/* <CardHeader></CardHeader> */}
+              <CardContent className="">
+                <div className="flex items-center justify-center mt-4">
+                  <h2 className="text-xl">{getCurrentDescription()}</h2>
+                </div>
+              </CardContent>
+              {/* <CardFooter>
+                <p>Card Footer</p>
+              </CardFooter> */}
+            </Card>
             {filteredDishes.length > 0 ? (
               <div
                 className={
@@ -367,10 +402,10 @@ export function RestaurantMenu({
                 ))}
               </div>
             ) : (
-              <p className="text-center py-4 text-gray-500">
+              <p className="text-xl text-center py-32 text-gray-500">
                 {t(
-                  "No dishes available in this section",
-                  "No hay platos disponibles en esta sección"
+                  "Please select a subcategory to view dishes.",
+                  "Por favor, seleccione una subcategoría para ver los platos."
                 )}
               </p>
             )}
