@@ -3,17 +3,16 @@ services:
     container_name: menu-app
     restart: always
     ports:
-      - "3002:3000"
+      - "3002:3002"
     build:
       context: ./
       dockerfile: ./Dockerfile
-      # args:
-      #   - NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY}
-      #   - NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
+      args:
+        - DATABASE_URL=${DATABASE_URL}
     image: menu-app:0.1
     pull_policy: always
     env_file:
-      - stack.env
+      - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}
       

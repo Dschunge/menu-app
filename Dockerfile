@@ -11,6 +11,7 @@ WORKDIR /app
 # Set as environment variables for the build process
 # ENV NEXT_PUBLIC_POSTHOG_KEY=${NEXT_PUBLIC_POSTHOG_KEY}
 # ENV NEXT_PUBLIC_POSTHOG_HOST=${NEXT_PUBLIC_POSTHOG_HOST}
+ARG DATABASE_URL
 
 # Copy package files and install dependencies
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
@@ -24,9 +25,13 @@ RUN \
 # Copy application code
 COPY . .
 
+
 # Set environment variables
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+
+# Generate Prisma client
+RUN npx prisma generate
 
 # Build the application
 RUN npm run build
@@ -41,7 +46,7 @@ RUN apk add --no-cache dumb-init
 # Set environment variables
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PORT 3000
+ENV PORT 3002
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -59,7 +64,7 @@ RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 # Expose the port the app will run on
-EXPOSE 3000
+EXPOSE 3002
 
 # Set host to listen on all network interfaces
 ENV HOST 0.0.0.0
